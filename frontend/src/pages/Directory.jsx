@@ -1,5 +1,3 @@
-import React from "react";
-import AlumniDir from "../component/AlumniDir";
 import AlumniList from "../component/AlumniList";
 
 const Directory = () => {

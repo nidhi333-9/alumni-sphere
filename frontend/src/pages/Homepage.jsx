@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import Navbar from "../component/Navbar";
 import HeroSection from "../component/HeroSection";
 import HomeNews from "../component/HomeNews";
@@ -8,12 +8,11 @@ import Footer from "../component/Footer";
 export default function Homepage() {
   return (
     <>
-        <Navbar />
-        <HeroSection />
-        <HomeNews></HomeNews>
-        <HomeEvent/>
-        <Footer/>
-      
+      {/* <Navbar /> */}
+      <HeroSection />
+      <HomeNews></HomeNews>
+      <HomeEvent />
+      {/* <Footer/> */}
     </>
-  )
-};
+  );
+}

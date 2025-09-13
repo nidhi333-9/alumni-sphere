@@ -1,7 +1,6 @@
 const AlumniDir = ({ name, graduationYear, course, jobTitle, companyName }) => {
   return (
     <div className="w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300 p-4 flex items-start justify-between">
-      {/* Avatar + Info */}
       <div className="flex gap-4">
         <img
           src="../../profile.jpg"
@@ -18,7 +17,6 @@ const AlumniDir = ({ name, graduationYear, course, jobTitle, companyName }) => {
         </div>
       </div>
 
-      {/* Action Button */}
       <button className="self-center bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors">
         Connect
       </button>
