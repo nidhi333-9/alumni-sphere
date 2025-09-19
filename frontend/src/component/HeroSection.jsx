@@ -65,14 +65,14 @@ export default function HeroSection() {
   ];
 
   return (
-    <section className="bg-white py-16">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Stay Connected with your Batchmates
-          </h2>
-        </div>
+<section className="bg-gray-50 py-16 mt-10">
+  <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    {/* Title */}
+    <div className="mx-auto max-w-2xl text-center">
+      <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        Stay Connected with your Batchmates
+      </h2>
+    </div>
 
         {/* Search Bar */}
         <div className="w-full max-w-md mx-auto mt-5">
@@ -112,16 +112,17 @@ export default function HeroSection() {
                   <p className="text-xs text-gray-600">{member.course}</p>
 
                   {/* Toggle Button */}
-                  <button
-                    onClick={() => handleToggleConnect(index)}
-                    className={`mt-2 px-3 py-1 text-xs font-medium rounded-full shadow focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                      isSent
-                        ? "bg-blue-500 text-white hover:bg-blue-500 focus:ring-gray-500"
-                        : "bg-[#cfab8d] text-white hover:bg-[#896C6C] focus:ring-[#896C6C]"
-                    }`}
-                  >
-                    {isSent ? "Sent" : "Connect"}
-                  </button>
+<button
+  onClick={() => handleToggleConnect(index)}
+  className={`mt-2 px-4 py-1.5 text-xs font-semibold rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 ${
+    isSent
+      ? "bg-amber-600 text-white hover:bg-amber-700 hover:shadow-lg focus:ring-amber-500"
+      : "bg-amber-600 text-white hover:bg-amber-700 hover:shadow-lg focus:ring-amber-500"
+  }`}
+>
+  {isSent ? "Sent" : "Connect"}
+</button>
+
                 </li>
               );
             })}

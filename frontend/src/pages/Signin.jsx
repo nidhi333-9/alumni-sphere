@@ -12,22 +12,22 @@ export default function Signin() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:3000/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await fetch("http://localhost:5000/auth/signin", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password }),
+});
+
 
       const data = await res.json();
-      if (res.ok) {
-        // save JWT token for authenticated requests
-        localStorage.setItem("token", data.token);
+if (res.ok) {
+  localStorage.setItem("token", data.token);
+  navigate("/homepage");
+} else {
+  console.error("Backend error:", data); // 👈 log backend response
+  setError(data.error || "Login failed");
+}
 
-        // redirect to homepage
-        navigate("/homepage");
-      } else {
-        setError(data.error || "Login failed");
-      }
     } catch (err) {
       console.error("Signin error:", err);
       setError("Something went wrong, please try again.");
