@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import Loader from "./pages/Loader";
 import Signin from "./pages/Signin";
-import Signup from "./pages/Signup";  
+import Signup from "./pages/Signup";
 import Homepage from "./pages/Homepage";
 import ManageAccount from "./pages/ManageAccount";
 import Directory from "./pages/Directory";
@@ -43,6 +43,4 @@ function App() {
   );
 }
 
-
 export default App;
-
