@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ Get comments for a post
+// Get comments for a post
 router.get("/:id/comments", (req, res) => {
   const postId = req.params.id;
 
@@ -57,8 +57,8 @@ router.get("/:id/comments", (req, res) => {
   });
 });
 
-// ✅ Add a new comment
-// ✅ Add a new comment
+//  Add a new comment
+// Add a new comment
 router.post("/:postId/comments", async (req, res) => {
   const { postId } = req.params;
   const { userId, commentText } = req.body;
