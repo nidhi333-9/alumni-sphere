@@ -94,6 +94,17 @@ export default function Signin() {
               />
             </div>
 
+            {/* Forgot Password */}
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => navigate("/Forgot-password")}
+                className="text-sm text-indigo-700 hover:underline focus:outline-none"
+              >
+                Forgot Password?
+              </button>
+            </div>
+
             {/* Error */}
             {error && <p className="text-sm text-red-600">{error}</p>}
 

@@ -8,11 +8,11 @@ export default function CreatePost() {
     <>
       <Navbar />
 
-      <section data-scroll data-scroll-speed="1">
+      <section >
         <PostForm />
       </section>
 
-      <section data-scroll data-scroll-speed="1">
+      <section >
         <Footer />
       </section>
     </>

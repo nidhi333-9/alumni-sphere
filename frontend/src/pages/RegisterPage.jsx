@@ -45,13 +45,11 @@ const RegisterPage = () => {
     <>
       <Navbar />
       <div
-        data-scroll
-        data-scroll-container
+        
         className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-amber-100 py-16 px-6 mt-6"
       >
         <div
-          data-scroll
-          data-scroll-speed="1"
+         
           className="max-w-2xl mx-auto bg-white shadow-lg rounded-2xl p-10 border border-gray-200"
         >
           {/* Event Heading */}

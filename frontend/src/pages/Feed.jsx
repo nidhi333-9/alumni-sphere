@@ -7,8 +7,8 @@ export default function Feed() {
   return (
     <>
       <Navbar />
-      <FeedSection data-scroll data-scroll-speed="1" />
-      <Footer data-scroll data-scroll-speed="1" />
+      <FeedSection  />
+      <Footer  />
     </>
   )
 }

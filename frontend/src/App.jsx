@@ -24,6 +24,7 @@ import Events from "./pages/Events";
 import JobsPage from "./pages/JobsPage";
 // Import Layout wrapper
 import Layout from "./component/Layout"; // ✅ fixed
+import ForgotPassword from "./pages/Forgot-password";
 
 function App() {
   return (
@@ -47,6 +48,8 @@ function App() {
         <Route path="/all-news" element={<NewsDeatils />} />
         <Route path="/events" element={<Events />} />
         <Route path="/jobs" element={<JobsPage />} />
+        <Route path="/Forgot-password" element={<ForgotPassword />} />
+
       </Routes>
     </Router>
   );
