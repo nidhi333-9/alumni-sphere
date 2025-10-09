@@ -1,5 +1,29 @@
 import React, { useState } from "react";
-import img from "../Images/logo.png";
+import logo from "../Images/logo.png"; // ✅ Your alumni logo
+import { useNavigate } from "react-router-dom";   // ✅ import navigation
+import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
+
+// Reusable Input Field
+const InputField = ({ ...props }) => (
+  <input
+    {...props}
+    className="block w-full rounded-lg border-2 border-gray-400 bg-white px-4 py-3 text-base text-gray-800 
+               shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 
+               transition-all duration-200 ease-in-out mb-3"
+  />
+);
+
+// Reusable Select Box
+const SelectBox = ({ children, ...props }) => (
+  <select
+    {...props}
+    className="block w-full rounded-lg border-2 border-gray-400 bg-white px-4 py-3 text-base text-gray-800 
+               shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 
+               transition-all duration-200 ease-in-out mb-3"
+  >
+    {children}
+  </select>
+);
 
 export default function Signup() {
   const [formData, setFormData] = useState({
@@ -26,12 +50,12 @@ export default function Signup() {
   });
 
   const [message, setMessage] = useState("");
+const [isSuccess, setIsSuccess] = useState(false); // ✅ added
+const navigate = useNavigate(); // ✅ added
   const currentYear = new Date().getFullYear();
   const isAlumni = formData.endYear && parseInt(formData.endYear) < currentYear;
-  const isStudent =
-    formData.endYear && parseInt(formData.endYear) >= currentYear;
+  const isStudent = formData.endYear && parseInt(formData.endYear) >= currentYear;
 
-  // Dynamic semester options
   const semesterOptions = {
     "1st": [1, 2],
     "2nd": [3, 4],
@@ -40,7 +64,6 @@ export default function Signup() {
     "5th": [9, 10],
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -49,7 +72,6 @@ export default function Signup() {
     }));
   };
 
-  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -62,238 +84,212 @@ export default function Signup() {
       });
 
       const data = await response.json();
-
       if (response.ok) {
-        setMessage("Signup successful! You can now log in.");
-        setFormData({
-          firstName: "",
-          lastName: "",
-          gender: "",
-          scholarId: "",
-          email: "",
-          primaryPhone: "",
-          secondaryPhone: "",
-          department: "",
-          branch: "",
-          endYear: "",
-          currentYear: "",
-          semester: "",
-          jobTitle: "",
-          companyName: "",
-          city: "",
-          country: "",
-          sector: "",
-          skills: "",
-          address: "",
-          password: "",
-        });
-      } else {
-        setMessage(data.message || "Signup failed. Try again.");
-      }
+  setIsSuccess(true);
+  setMessage("🎉 Your account has been created successfully!");
+  setFormData({
+    firstName: "",
+    lastName: "",
+    gender: "",
+    scholarId: "",
+    email: "",
+    primaryPhone: "",
+    secondaryPhone: "",
+    department: "",
+    branch: "",
+    endYear: "",
+    currentYear: "",
+    semester: "",
+    jobTitle: "",
+    companyName: "",
+    city: "",
+    country: "",
+    sector: "",
+    skills: "",
+    address: "",
+    password: "",
+  });
+
+  // ✅ Redirect after 2s
+  setTimeout(() => {
+    navigate("/signin");
+  }, 2000);
+} else {
+  setIsSuccess(false);
+  setMessage(data.message || "❌ Signup failed. Please try again.");
+}
+
     } catch (error) {
       console.error("Error:", error);
-      setMessage("Server error. Please try later.");
+      setIsSuccess(false);
+      setMessage("⚠️ Server error. Please try later.");
     }
   };
 
+
   return (
-    <div className="flex min-h-full flex-col justify-center items-center px-6 py-2 lg:px-8">
-      {/* Header */}
-      <div className="w-full max-w-3xl bg-[#BBDCE5] px-6 py-6 rounded-md flex flex-col items-center">
-        <img src={img} alt="AlumniSphere Logo" className="h-24 w-auto mb-4" />
-        <h2 className="text-center text-4xl font-bold tracking-tight text-gray-700">
-          Alumni Sphere
-        </h2>
+    <div className="flex h-screen w-full">
+      {/* LEFT SIDE - Logo with Background */}
+      <div className="w-1/2 bg-indigo-700 text-white flex flex-col justify-center items-center p-10">
+        <img
+          src={logo}
+          alt="Alumni Logo"
+          className="h-32 w-32 mb-6 drop-shadow-lg"
+        />
+        <h1 className="text-3xl font-bold text-center">
+          Welcome to the Alumni Network
+        </h1>
+        <p className="text-center mt-4 text-indigo-100 max-w-sm">
+          Connect with fellow students and alumni. Share, grow, and stay
+          connected with your alma mater.
+        </p>
       </div>
 
-      {/* Form */}
-      <div className="mt-8 w-full flex justify-center">
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6 w-full max-w-3xl bg-white p-6 rounded-lg shadow"
-        >
-          {/* Name */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                First Name
-              </label>
-              <input
+      {/* RIGHT SIDE - Signup Form */}
+      <div className="w-1/2 bg-gray-100 flex items-center justify-center p-10 pt-80 overflow-y-auto">
+        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 ">
+          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
+            Create Your Account
+          </h2>
+{message && (
+  <div
+    className={`flex items-center gap-3 mt-4 mb-2 px-4 py-3 rounded-lg shadow-md text-sm font-medium
+      ${isSuccess 
+        ? "bg-green-100 text-green-800 border border-green-300" 
+        : "bg-red-100 text-red-800 border border-red-300"
+      }`}
+  >
+    {isSuccess ? (
+      <CheckCircleIcon className="h-5 w-5 text-green-600" />
+    ) : (
+      <ExclamationCircleIcon className="h-5 w-5 text-red-600" />
+    )}
+    <span>{message}</span>
+  </div>
+)}
+
+          <form
+            onSubmit={handleSubmit}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+                e.preventDefault();
+              }
+            }}
+            className="space-y-6"
+          >
+            {/* Name */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InputField
                 type="text"
                 name="firstName"
+                placeholder="First Name"
                 value={formData.firstName}
                 onChange={handleChange}
                 required
-                placeholder="First Name"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Last Name
-              </label>
-              <input
+              <InputField
                 type="text"
                 name="lastName"
+                placeholder="Last Name"
                 value={formData.lastName}
                 onChange={handleChange}
                 required
-                placeholder="Last Name"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
               />
             </div>
-          </div>
 
-          {/* Gender + Scholar ID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Gender
-              </label>
-              <select
+            {/* Gender + Scholar ID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <SelectBox
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
                 required
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
               >
                 <option value="">Select Gender</option>
                 <option>Male</option>
                 <option>Female</option>
                 <option>Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Scholar ID
-              </label>
-              <input
+              </SelectBox>
+              <InputField
                 type="text"
                 name="scholarId"
+                placeholder="Scholar ID"
                 value={formData.scholarId}
                 onChange={handleChange}
                 required
-                placeholder="Scholar ID"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
               />
             </div>
-          </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Email
-            </label>
-            <input
+            {/* Email */}
+            <InputField
               type="email"
               name="email"
+              placeholder="you@example.com"
               value={formData.email}
               onChange={handleChange}
               required
-              placeholder="you@example.com"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
             />
-          </div>
 
-          {/* Phones */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Primary Phone
-              </label>
-              <input
+            {/* Phones */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InputField
                 type="tel"
                 name="primaryPhone"
+                placeholder="Primary Phone"
                 value={formData.primaryPhone}
                 onChange={handleChange}
                 required
-                placeholder="Primary Phone"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Secondary Phone
-              </label>
-              <input
+              <InputField
                 type="tel"
                 name="secondaryPhone"
+                placeholder="Secondary Phone"
                 value={formData.secondaryPhone}
                 onChange={handleChange}
-                placeholder="Secondary Phone"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
               />
             </div>
-          </div>
 
-          {/* Department + Branch */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Department
-              </label>
-              <input
+            {/* Department + Branch */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <InputField
                 type="text"
                 name="department"
+                placeholder="Department"
                 value={formData.department}
                 onChange={handleChange}
                 required
-                placeholder="Department"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-1">
-                Branch
-              </label>
-              <input
+              <InputField
                 type="text"
                 name="branch"
+                placeholder="Branch"
                 value={formData.branch}
                 onChange={handleChange}
                 required
-                placeholder="Branch"
-                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
               />
             </div>
-          </div>
 
-          {/* Ending Year */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Graduation Year
-            </label>
-            <input
+            {/* Graduation Year */}
+            <InputField
               type="number"
               name="endYear"
+              placeholder="Graduation Year (e.g. 2026)"
               value={formData.endYear}
               onChange={handleChange}
-              min="1900"
-              max="2100"
               required
-              placeholder="e.g. 2026"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
             />
-          </div>
 
-          {/* Student Section */}
-          {isStudent && (
-            <div className="space-y-6 border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-gray-700">
-                Student Details
+            {/* Student Section */}
+            {isStudent && (
+              <>
+               <h3 className="text-lg font-semibold text-gray-700">
+                Alumni Details
               </h3>
-
-              {/* Current Year */}
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
-                  Current Year
-                </label>
-                <select
+                <SelectBox
                   name="currentYear"
                   value={formData.currentYear}
                   onChange={handleChange}
                   required
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
                 >
                   <option value="">Select Year</option>
                   <option value="1st">1st</option>
@@ -301,175 +297,111 @@ export default function Signup() {
                   <option value="3rd">3rd</option>
                   <option value="4th">4th</option>
                   <option value="5th">5th</option>
-                </select>
-              </div>
+                </SelectBox>
 
-              {/* Semester */}
-              <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">
-                  Semester
-                </label>
-                <select
+                <SelectBox
                   name="semester"
                   value={formData.semester}
                   onChange={handleChange}
                   required
-                  className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
                   disabled={!formData.currentYear}
                 >
                   <option value="">Select Semester</option>
                   {formData.currentYear &&
-                    semesterOptions[formData.currentYear].map((sem) => (
+                    semesterOptions[formData.currentYear]?.map((sem) => (
                       <option key={sem} value={sem}>
                         {sem}
                       </option>
                     ))}
-                </select>
-              </div>
-            </div>
-          )}
+                </SelectBox>
+              </>
+            )}
 
-          {/* Alumni Section */}
-          {isAlumni && (
-            <div className="space-y-6 border-t border-gray-200 pt-6">
-              <h3 className="text-lg font-semibold text-gray-700">
+            {/* Alumni Section */}
+            {isAlumni && (
+              <>
+               <h3 className="text-lg font-semibold text-gray-700">
                 Alumni Details
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Job Title
-                  </label>
-                  <input
-                    type="text"
-                    name="jobTitle"
-                    value={formData.jobTitle}
-                    onChange={handleChange}
-                    placeholder="Software Engineer"
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Company Name
-                  </label>
-                  <input
-                    type="text"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleChange}
-                    placeholder="Google"
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
-                  />
-                </div>
-              </div>
+                <InputField
+                  type="text"
+                  name="jobTitle"
+                  placeholder="Job Title"
+                  value={formData.jobTitle}
+                  onChange={handleChange}
+                />
+                <InputField
+                  type="text"
+                  name="companyName"
+                  placeholder="Company Name"
+                  value={formData.companyName}
+                  onChange={handleChange}
+                />
+                <InputField
+                  type="text"
+                  name="city"
+                  placeholder="Current City"
+                  value={formData.city}
+                  onChange={handleChange}
+                />
+                <InputField
+                  type="text"
+                  name="country"
+                  placeholder="Country"
+                  value={formData.country}
+                  onChange={handleChange}
+                />
+                <InputField
+                  type="text"
+                  name="sector"
+                  placeholder="Sector (IT, Finance, etc.)"
+                  value={formData.sector}
+                  onChange={handleChange}
+                />
+                <InputField
+                  type="text"
+                  name="skills"
+                  placeholder="Skills (React, SQL, etc.)"
+                  value={formData.skills}
+                  onChange={handleChange}
+                />
+              </>
+            )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Current City
-                  </label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    placeholder="San Francisco"
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Current Country
-                  </label>
-                  <input
-                    type="text"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    placeholder="USA"
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Sector
-                  </label>
-                  <input
-                    type="text"
-                    name="sector"
-                    value={formData.sector}
-                    onChange={handleChange}
-                    placeholder="IT / Finance / Education"
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">
-                    Skills
-                  </label>
-                  <input
-                    type="text"
-                    name="skills"
-                    value={formData.skills}
-                    onChange={handleChange}
-                    placeholder="JavaScript, React, SQL"
-                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Address */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Address
-            </label>
+            {/* Address */}
             <textarea
               name="address"
+              rows="3"
+              placeholder="Address"
               value={formData.address}
               onChange={handleChange}
-              rows="3"
-              placeholder="Enter your address"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
-            ></textarea>
-          </div>
+              className="block w-full rounded-lg border-2 border-gray-400 bg-white px-4 py-3 text-base text-gray-800 
+                         shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 
+                         transition-all duration-200 ease-in-out mb-3 resize-none"
+            />
 
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Password
-            </label>
-            <input
+            {/* Password */}
+            <InputField
               type="password"
               name="password"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               required
-              placeholder="********"
-              className="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:ring-indigo-600 focus:border-indigo-600"
             />
-          </div>
 
-          {/* Submit */}
-          <div>
+            {/* Submit */}
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600"
+              className="w-full py-4 rounded-lg bg-indigo-600 text-white font-semibold text-lg shadow-md 
+                         hover:bg-indigo-700 hover:scale-[1.02] transform transition"
             >
-              Sign up
+              Sign Up
             </button>
-          </div>
 
-          {/* Message */}
-          {message && (
-            <p className="text-center text-sm text-red-600 mt-2">{message}</p>
-          )}
-        </form>
+
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -44,9 +44,16 @@ const RegisterPage = () => {
   return (
     <>
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-amber-100 py-16 px-6 mt-6">
-        <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-2xl p-10 border border-gray-200">
-          
+      <div
+        data-scroll
+        data-scroll-container
+        className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-amber-100 py-16 px-6 mt-6"
+      >
+        <div
+          data-scroll
+          data-scroll-speed="1"
+          className="max-w-2xl mx-auto bg-white shadow-lg rounded-2xl p-10 border border-gray-200"
+        >
           {/* Event Heading */}
           <h1 className="text-4xl font-bold text-center text-amber-800 mb-4">
             {eventName || "Event Registration"}
@@ -55,7 +62,8 @@ const RegisterPage = () => {
             Fill the form below to register for{" "}
             <span className="font-semibold text-amber-700">
               {eventName || "the event"}
-            </span>.
+            </span>
+            .
           </p>
 
           {/* Form */}

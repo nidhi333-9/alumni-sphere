@@ -50,6 +50,7 @@ exports.signin = async (req, res) => {
 
 
 //SIGNUP
+
 exports.signup = async (req, res) => {
   try {
     const {

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../component/Navbar";
-import Footer from "../component/Footer";
+import Footer from "../component/Footer"; // teammate ka change rakha
 
 export default function ManageAccount() {
   const [profileSettings, setProfileSettings] = useState({
@@ -26,7 +26,7 @@ export default function ManageAccount() {
   const [userName, setUserName] = useState("Your Name");
   const [isEditingName, setIsEditingName] = useState(false);
 
-  //profile about state
+  // Profile about state
   const [userAbout, setUserAbout] = useState("Your About Details of ");
   const [isEditingAbout, setIsEditingAbout] = useState(false);
 
@@ -62,18 +62,17 @@ export default function ManageAccount() {
     setIsEditingName(false);
     localStorage.setItem("userName", userName);
   };
+
   const handleAboutSave = () => {
     setIsEditingAbout(false);
     localStorage.setItem("userAbout", userName);
   };
-  
 
   return (
     <>
       <Navbar />
-      <div className="min-h-screen h-full w-full
-       p-20 bg-white flex justify-center items-center mt-6">
-        <div className="w-full overflow-hidden sm:max-w-6xl p-8  h-full shadow-lg bg-slate-100 rounded-xl flex">
+      <div className="min-h-screen h-full w-full p-20 bg-white flex justify-center items-center mt-6">
+        <div className="w-full overflow-hidden sm:max-w-6xl p-8 h-full shadow-lg bg-slate-100 rounded-xl flex">
           {/* Left Side: Account Settings */}
           <div className="flex-1 pr-6 border-r">
             <h2 className="text-2xl font-semibold mb-6 text-center">
@@ -192,15 +191,12 @@ export default function ManageAccount() {
 
           {/* Right Side: Profile Update */}
           <div className="w-1/3 flex flex-col items-center pb-8 justify-start pl-6">
-            {/* <h3 className="text-lg font-medium mb-4">Profile</h3> */}
-
-            <div className="relative w-32   h-32 rounded-full overflow-hidden border-2 border-white shadow-md mb-4 group">
+            <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-white shadow-md mb-4 group">
               <img
                 src={profilePic || "https://via.placeholder.com/150"}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
-              {/* Edit Icon Overlay */}
               <div
                 onClick={handleButtonClick}
                 className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition"
@@ -222,7 +218,6 @@ export default function ManageAccount() {
               </div>
             </div>
 
-            {/* Hidden File Input */}
             <input
               type="file"
               accept="image/*"
@@ -273,6 +268,7 @@ export default function ManageAccount() {
                 </div>
               )}
             </div>
+
             {/* About Editing */}
             <div className="mb-4 text-center">
               {isEditingAbout ? (
@@ -315,17 +311,10 @@ export default function ManageAccount() {
                 </div>
               )}
             </div>
-
-            {/* <button
-              onClick={handleButtonClick}
-              className="bg-[#896c6c] text-white px-4 py-2 rounded-lg font-medium hover:bg-[#4a3030] transition"
-            >
-              Update Profile Picture
-            </button> */}
           </div>
         </div>
       </div>
-      < Footer />
+      <Footer />
     </>
   );
  }

@@ -8,14 +8,16 @@ const AlumniProfile = () => {
   const [alumni, setAlumni] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:5000/alumni")
-      .then((res) => res.json())
-      .then((data) => {
-        const found = data.find((a) => String(a.Alumni_ID) === String(id));
-        setAlumni(found);
-      })
-      .catch((err) => console.error(err));
-  }, [id]);
+  fetch("http://localhost:5000/alumni")
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Fetched alumni data:", data); // 👈 check field names here
+      const found = data.find((a) => String(a.Alumni_ID) === String(id));
+      setAlumni(found);
+    })
+    .catch((err) => console.error(err));
+}, [id]);
+
 
   if (!alumni) {
     return (
@@ -64,13 +66,14 @@ const AlumniProfile = () => {
             <p className="text-gray-600">{alumni.Company_Name || "—"}</p>
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-800">Current City</h3>
-            <p className="text-gray-600">{alumni.Current_City || "—"}</p>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">Skills</h3>
-            <p className="text-gray-600">{alumni.Skills || "—"}</p>
-          </div>
+  <h3 className="text-lg font-semibold text-gray-800">Current City</h3>
+  <p className="text-gray-600">{alumni.currentCity || "—"}</p>
+</div>
+<div>
+  <h3 className="text-lg font-semibold text-gray-800">Skills</h3>
+  <p className="text-gray-600">{alumni.skills || "—"}</p>
+</div>
+
         </div>
 
         {/* Call to Action */}

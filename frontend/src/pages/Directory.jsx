@@ -14,15 +14,15 @@ const Directory = () => {
           Alumni Directory
         </h1>
         <p className="text-gray-600 text-center mb-10">
+          
           Explore and connect with alumni across different years and fields.
         </p>
 
         {/* Alumni List */}
-        <AlumniList />
+        <AlumniList data-scroll data-scroll-speed="1.5"/>
       </section>
-      <Footer />
+      <Footer data-scroll data-scroll-speed="2"/>
     </>
   );
 };
-
 export default Directory;

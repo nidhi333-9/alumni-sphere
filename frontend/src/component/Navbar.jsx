@@ -161,7 +161,9 @@ export default function Navbar() {
                     👤 Profile Setting
                   </NavLink>
                 </li>
-                <li className="cursor-pointer hover:text-amber-600">🚪 Logout</li>
+                <li className="cursor-pointer hover:text-amber-600">
+                  🚪 Logout
+                </li>
               </ul>
             </div>
           )}

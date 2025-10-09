@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom"; // for navigation
-
+import { Link } from "react-router-dom";
 export default function HomeNews() {
   const scrollRef = useRef(null);
   const [activeTab, setActiveTab] = useState("latest");
@@ -19,7 +19,7 @@ export default function HomeNews() {
   };
 
   return (
-<div className="bg-amber-50 py-12 mt-10">
+<div className="bg-amber-50 py-12 ">
   <div className="mx-auto max-w-7xl px-6 lg:px-8">
     {/* Header */}
     <div className="mx-auto max-w-2xl text-center">
@@ -40,12 +40,14 @@ export default function HomeNews() {
           >
             Latest News
           </button>
+          <Link to="/all-news" className="text-gray-700 hover:underline">
           <button
             onClick={() => navigate("/all-news")}
             className="px-4 py-2 rounded-full font-medium bg-gray-200 text-gray-700 hover:bg-gray-300"
           >
             All News
           </button>
+          </Link>
         </div>
 
         {/* Show carousel only if Latest News is active */}

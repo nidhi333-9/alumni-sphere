@@ -6,8 +6,8 @@ export default function ConnectionPage() {
   return (
     <>
       <Navbar/>
-      <Connections/>
-      <Footer/>
+      <Connections data-scroll data-scroll-speed="1"/>
+      <Footer data-scroll data-scroll-speed="1"/>
     </>
   )
 }

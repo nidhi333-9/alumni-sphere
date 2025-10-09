@@ -49,8 +49,8 @@
 }
 /* Thin scrollbar */
 ::-webkit-scrollbar {
-  height: 10px;   /* 👈 smaller height for horizontal scrollbar */
-  width: 6px;    /* 👈 smaller width for vertical scrollbar */
+  height: 10px;   /*  smaller height for horizontal scrollbar */
+  width: 6px;    /*  smaller width for vertical scrollbar */
 }
 
 ::-webkit-scrollbar-track {
@@ -64,4 +64,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: #4c78b6; /* Tailwind gray-400 */
+}
+
+[data-scroll-container] {
+  /* Optional: helps with layout */
+  will-change: transform;
 }

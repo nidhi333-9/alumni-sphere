@@ -1,6 +1,7 @@
-require("dotenv").config();
 const mysql = require("mysql2/promise");
+require("dotenv").config(); // Load .env variables
 
+// Create a connection pool
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
@@ -8,7 +9,15 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
-console.log("DB_USER is:", process.env.DB_USER);
+// Test the connection once when app starts
+(async () => {
+  try {
+    const conn = await pool.getConnection();
+    console.log("✅ Database connected successfully.");
+    conn.release(); // release connection back to pool
+  } catch (err) {
+    console.error("❌ Database connection failed:", err.message);
+  }
+})();
 
 module.exports = pool;
-
