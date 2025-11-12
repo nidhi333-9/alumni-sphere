@@ -1,6 +1,6 @@
 import { useParams, useLocation, Link } from "react-router-dom";
 
-export default function EventDetails() {
+export default function EventsDetails() {
   const { id } = useParams();
   const location = useLocation();
   const event = location.state; // comes from Link in EventSection

@@ -19,9 +19,10 @@ import ConnectionPage from "./pages/ConnectionPage";
 import DonationPage from "./pages/DonationPage";
 import AlumniProfile from "./component/AlumniProfile"; // ✅ fixed
 import RegisterPage from "./pages/RegisterPage";
-import NewsDeatils from "./pages/NewsDetails";
-import Events from "./pages/Events";
+import NewsDetails from "./pages/NewsDetails";
+import Events from "./pages/EventSection";
 import JobsPage from "./pages/JobsPage";
+import EventsDetails from "./pages/EventsDetails";
 // Import Layout wrapper
 import Layout from "./component/Layout"; // ✅ fixed
 import ForgotPassword from "./pages/Forgot-password";
@@ -45,8 +46,12 @@ function App() {
         <Route path="/alumni/:id" element={<Layout><AlumniProfile /></Layout>} />
         <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
 
-        <Route path="/all-news" element={<NewsDeatils />} />
-        <Route path="/events" element={<Events />} />
+        <Route path="/all-news" element={<NewsDetails />} />
+        {/* <Route path="/Events" element={<Events />} /> */}
+        <Route path="/events/:id" element={<EventsDetails />} />
+
+         <Route path="/EventsDetails" element={<EventsDetails />} />
+
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/Forgot-password" element={<ForgotPassword />} />
 
