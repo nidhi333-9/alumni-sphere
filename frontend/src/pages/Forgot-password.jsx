@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 export default function ForgotPassword() {
   const navigate = useNavigate();
 
-  // Steps: 1-email input, 2-otp input, 3-new password input
   const [step, setStep] = useState(1);
 
   const [email, setEmail] = useState("");
@@ -16,7 +15,6 @@ export default function ForgotPassword() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Send OTP to email
   const sendOtp = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -46,7 +44,6 @@ export default function ForgotPassword() {
     }
   };
 
-  // Verify OTP
   const verifyOtp = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -76,7 +73,7 @@ export default function ForgotPassword() {
     }
   };
 
-  // Reset Password
+  
   const resetPassword = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -99,7 +96,6 @@ export default function ForgotPassword() {
 
       if (res.ok) {
         setMessage(data.message || "Password reset successfully!");
-        // Optionally navigate back to sign-in after short delay
         setTimeout(() => navigate("/signin"), 2000);
       } else {
         setError(data.error || "Failed to reset password.");
@@ -119,7 +115,6 @@ export default function ForgotPassword() {
           Forgot Your Password?
         </h2>
 
-        {/* Messages */}
         {message && <p className="text-center text-green-600 mb-4">{message}</p>}
         {error && <p className="text-center text-red-600 mb-4">{error}</p>}
 

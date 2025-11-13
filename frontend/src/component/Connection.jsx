@@ -1,17 +1,14 @@
 import React, { useState } from "react";
 import { MessageCircle, Search, X } from "lucide-react";
 
-// ✅ Reusable Card Component
 function ConnectionCard({ user, handleChat }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden text-center transform transition duration-300 hover:scale-105 hover:shadow-amber-300 hover:shadow-2xl">
-      {/* Cover + Avatar */}
       <div className="relative">
         <div className="h-28 w-full">
           <img src={user.cover} alt="cover" className="h-full w-full object-cover" />
         </div>
 
-        {/* Avatar */}
         <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-12">
           <div className="relative">
             <img
@@ -47,7 +44,6 @@ function ConnectionCard({ user, handleChat }) {
   );
 }
 
-// ✅ Chat Window Component
 function ChatWindow({ user, onClose }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -60,7 +56,6 @@ function ChatWindow({ user, onClose }) {
 
   return (
     <div className="fixed bottom-6 right-6 w-80 bg-white border border-gray-300 rounded-2xl shadow-lg flex flex-col">
-      {/* Header */}
       <div className="flex justify-between items-center bg-blue-600 text-white p-3 rounded-t-2xl">
         <h2 className="font-semibold">{user.name}</h2>
         <button onClick={onClose}>
@@ -68,7 +63,6 @@ function ChatWindow({ user, onClose }) {
         </button>
       </div>
 
-      {/* Messages */}
       <div className="flex-1 p-3 overflow-y-auto max-h-64 text-sm">
         {messages.length === 0 ? (
           <p className="text-gray-500 text-center">No messages yet.</p>
@@ -82,7 +76,6 @@ function ChatWindow({ user, onClose }) {
         )}
       </div>
 
-      {/* Input */}
       <div className="flex items-center p-3 border-t">
         <input
           type="text"
@@ -183,7 +176,7 @@ export default function Connections() {
   });
 
   return (
-    <section className="min-h-screen w-full bg-gradient-to-br from-amber-50 via-white to-amber-100 py-12 px-6 mt-10">
+    <section className="min-h-screen w-full bg-gradient-to-br py-12 px-6 mt-10">
       <div className="max-w-7xl mx-auto">
         {/* Page Heading */}
         <h1 className="text-4xl font-bold text-amber-900 text-center mb-4">
@@ -218,7 +211,6 @@ export default function Connections() {
           </select>
         </div>
 
-        {/* Connections Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {filteredConnections.map((user) => (
             <ConnectionCard key={user.id} user={user} handleChat={handleChat} />
@@ -232,7 +224,6 @@ export default function Connections() {
         </div>
       </div>
 
-      {/* Chat Window */}
       {chatUser && <ChatWindow user={chatUser} onClose={() => setChatUser(null)} />}
     </section>
   );

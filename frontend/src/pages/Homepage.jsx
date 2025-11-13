@@ -10,22 +10,18 @@ export default function Homepage() {
     <>
       <Navbar />
 
-      {/* Hero Section with scroll animation */}
       <section>
         <HeroSection />
       </section>
 
-      {/* News Section with slower scroll */}
       <section>
         <HomeNews />
       </section>
 
-      {/* Event Section with parallax effect */}
       <section>
         <HomeEvent />
       </section>
 
-      {/* Footer, fixed scroll speed */}
       <section>
         <Footer />
       </section>

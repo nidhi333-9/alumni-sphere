@@ -7,7 +7,6 @@ export default function Jobs() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Fetch jobs from backend API
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -17,7 +16,6 @@ export default function Jobs() {
         console.log("Fetched jobs:", data); // 👈 Add this
 
 
-        // Convert DB column names into frontend-friendly format
         const formattedJobs = data.map((job) => ({
           id: job.Job_ID,
           title: job.Job_Title,
@@ -52,7 +50,6 @@ export default function Jobs() {
     setFilteredJobs(filtered);
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -66,7 +63,6 @@ export default function Jobs() {
   return (
     <section className="min-h-screen bg-gray-50 py-12 px-6 relative mt-10">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <h1 className="text-4xl font-bold text-gray-900 text-center mb-3">
           Job Opportunities
         </h1>
@@ -74,7 +70,6 @@ export default function Jobs() {
           Discover career opportunities shared by alumni and companies.
         </p>
 
-        {/* Search */}
         <div className="flex justify-center mb-10">
           <input
             type="text"
@@ -91,7 +86,6 @@ export default function Jobs() {
           </button>
         </div>
 
-        {/* Jobs List */}
         <div className="space-y-6">
           {filteredJobs.length === 0 ? (
             <p className="text-center text-gray-500">No jobs found.</p>
@@ -101,7 +95,6 @@ export default function Jobs() {
                 key={job.id}
                 className="bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition flex items-center justify-between p-6"
               >
-                {/* Left Side */}
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                     <Briefcase className="text-blue-600" size={20} />
@@ -118,7 +111,6 @@ export default function Jobs() {
                   <p className="mt-3 text-gray-600 text-sm">{job.description}</p>
                 </div>
 
-                {/* Right Side */}
                 <div className="ml-6">
                   <a
                     href={job.applyLink}
@@ -135,18 +127,15 @@ export default function Jobs() {
         </div>
       </div>
 
-      {/* Floating Expandable Button */}
       <button
         className="fixed bottom-8 right-8 flex items-center bg-blue-600 text-white 
         rounded-full shadow-lg overflow-hidden transition-all duration-300 ease-in-out 
         group hover:pr-5"
       >
-        {/* Icon */}
         <div className="p-4 flex items-center justify-center">
           <Plus size={22} />
         </div>
 
-        {/* Expanding Label */}
         <span
           className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-xs 
           group-hover:opacity-100 transition-all duration-300 text-sm font-medium"

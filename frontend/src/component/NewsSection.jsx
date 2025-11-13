@@ -113,7 +113,6 @@ export default function NewsSection() {
                 </h3>
                 <p className="mt-4 text-gray-600">{item.description}</p>
 
-                {/* Expandable Section */}
                 {expandedIndex === index && (
                   <p className="mt-4 text-gray-700">{item.details}</p>
                 )}

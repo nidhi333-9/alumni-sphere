@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom"; // for navigation
+import { useNavigate } from "react-router-dom"; 
 import { Link } from "react-router-dom";
 export default function HomeNews() {
   const scrollRef = useRef(null);
@@ -21,14 +21,12 @@ export default function HomeNews() {
   return (
 <div className="bg-amber-50 py-12 ">
   <div className="mx-auto max-w-7xl px-6 lg:px-8">
-    {/* Header */}
     <div className="mx-auto max-w-2xl text-center">
       <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
         News and Updates
       </h2>
     </div>
 
-        {/* Tabs */}
         <div className="flex justify-center mt-6 space-x-4">
           <button
             onClick={() => setActiveTab("latest")}
@@ -50,10 +48,8 @@ export default function HomeNews() {
           </Link>
         </div>
 
-        {/* Show carousel only if Latest News is active */}
         {activeTab === "latest" && (
   <div className="relative mt-10">
-    {/* Arrows */}
     <button
       onClick={() => scroll("left")}
       className="absolute -left-8 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow hover:bg-gray-200 z-10"
@@ -67,12 +63,10 @@ export default function HomeNews() {
       <ChevronRight className="w-6 h-6 text-gray-600" />
     </button>
 
-    {/* Blog Carousel */}
     <div
       ref={scrollRef}
       className="flex overflow-x-scroll snap-x snap-mandatory scroll-smooth gap-8 px-8 scrollbar-none"
     >
-      {/* Blog 1 */}
       <article className="flex-none w-80 snap-center flex flex-col items-start justify-between">
         <div className="relative w-full">
           <img
@@ -99,7 +93,6 @@ export default function HomeNews() {
         </div>
       </article>
 
-      {/* Blog 2 */}
       <article className="flex-none w-80 snap-center flex flex-col items-start justify-between">
         <div className="relative w-full">
           <img

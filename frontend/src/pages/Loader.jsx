@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import img from "../Images/logo.png"; // adjust path to your logo
+import img from "../Images/logo.png"; 
 
 function Loader() {
   return (

@@ -13,15 +13,15 @@ router.get("/", async (req, res) => {
       e.Event_Date,
       e.Event_Type,
       e.Event_Link,
-      e.Event_Image,
+      e.Event_Image, 
       e.Event_Location
     FROM Event_Table e
   `;
 
   if (type === "latest") {
-    query += ` ORDER BY e.Creation_Date DESC LIMIT 5;`; // latest 5 events
+    query += ` ORDER BY e.Creation_Date DESC LIMIT 5;`; 
   } else {
-    query += ` ORDER BY e.Event_Date ASC;`; // all events by upcoming date
+    query += ` ORDER BY e.Event_Date ASC;`; 
   }
 
   try {

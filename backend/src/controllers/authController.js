@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 // SIGNIN
-// SIGNIN
 exports.signin = async (req, res) => {
   const { email, password } = req.body;
 
@@ -20,20 +19,17 @@ exports.signin = async (req, res) => {
 
     const user = rows[0];
 
-    // ✅ Compare entered password with hashed password in DB
     const validPassword = await bcrypt.compare(password, user.Password);
     if (!validPassword) {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: user.User_ID, email: user.Email_ID },
       process.env.JWT_SECRET || "secret123",
       { expiresIn: "1h" }
     );
 
-    // Remove password before sending user object
     const { Password, ...userWithoutPassword } = user;
 
     res.json({
@@ -75,17 +71,14 @@ exports.signup = async (req, res) => {
       branch
     } = req.body;
 
-    // Decide user type (alumni if endYear < currentYear)
     const currentYear = new Date().getFullYear();
-    let userTypeId = 2; // default Student
+    let userTypeId = 2; 
     if (endYear && parseInt(endYear) < currentYear) {
-      userTypeId = 1; // Alumni
+      userTypeId = 1; 
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert into User_Table
     const [result] = await pool.query(
       `INSERT INTO User_Table 
         (User_Type_ID, User_Fname, User_Lname, Gender, Phone_no, Phone_no_2, Email_ID, Password, Address) 
@@ -95,7 +88,6 @@ exports.signup = async (req, res) => {
 
     const userId = result.insertId;
 
-    // ✅ Insert into Student or Alumni table as well
     if (userTypeId === 2) {
       await pool.query(
         `INSERT INTO Student_Table (User_ID, Scholar_No, Department, Course, Current_Year, Graduation_Year) 
@@ -103,7 +95,7 @@ exports.signup = async (req, res) => {
         [userId, scholarId, department, branch, startYear, endYear]
       );
     } else if (userTypeId === 1) {
-      const alumniId = Math.floor(10000 + Math.random() * 90000); // random 5-digit number
+      const alumniId = Math.floor(10000 + Math.random() * 90000); 
 
 await pool.query(
   `INSERT INTO Alumni_Table (

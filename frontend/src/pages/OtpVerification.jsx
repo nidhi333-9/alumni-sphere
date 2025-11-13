@@ -21,7 +21,7 @@ export default function OtpVerification() {
       const data = await response.json();
       if (response.ok) {
         setMessage("✅ Email verified successfully!");
-        navigate("/login"); // Redirect to login after success
+        navigate("/login"); 
       } else {
         setMessage(data.message || "❌ Invalid OTP. Try again.");
       }

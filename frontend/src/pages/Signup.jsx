@@ -187,6 +187,7 @@ const navigate = useNavigate(); // ✅ added
                 onChange={handleChange}
                 required
               />
+              
               <InputField
                 type="text"
                 name="lastName"

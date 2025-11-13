@@ -1,6 +1,6 @@
 import React from "react";
 import { UserPlus } from "lucide-react";
-import maleDP from "../Images/dp-male.png"; // ✅ import image
+import maleDP from "../Images/dp-male.png"; 
 
 const AlumniDir = ({ name, graduationYear, course, jobTitle, companyName }) => {
   return (
@@ -8,10 +8,9 @@ const AlumniDir = ({ name, graduationYear, course, jobTitle, companyName }) => {
       hover:shadow-amber-300 hover:shadow-2xl hover:-translate-y-1 
       transition-all duration-300 p-8 grid grid-cols-1 md:grid-cols-3 items-center gap-8 mb-8">
 
-      {/* Column 1 - Profile */}
       <div className="flex items-center gap-4">
         <img 
-          src={maleDP}   // ✅ use imported variable
+          src={maleDP}  
           alt={name}
           className="w-20 h-20 rounded-full object-cover shadow-md ring-2 ring-amber-200"
         />
@@ -23,7 +22,6 @@ const AlumniDir = ({ name, graduationYear, course, jobTitle, companyName }) => {
         </div>
       </div>
 
-      {/* Column 2 - Details */}
       <div className="space-y-2">
         <p className="text-base text-gray-700">
           <span className="font-medium">Post:</span> {jobTitle}
@@ -33,7 +31,6 @@ const AlumniDir = ({ name, graduationYear, course, jobTitle, companyName }) => {
         </p>
       </div>
 
-      {/* Column 3 - Action */}
       <div className="flex md:justify-end">
         <button
           className="flex items-center gap-2 px-6 py-2 text-sm font-semibold text-white rounded-full 

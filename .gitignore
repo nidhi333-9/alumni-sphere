@@ -52,5 +52,3 @@ dist-ssr
 # Env files
 .env
 
-# Firebase keys
-/backend/serviceAccountKey.json

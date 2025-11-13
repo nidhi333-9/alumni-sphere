@@ -6,7 +6,6 @@ export default function Footer() {
     <footer className="bg-gradient-to-r from-amber-100 via-white to-amber-100 text-gray-800 py-10  border-t border-amber-200">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10">
         
-        {/* About */}
         <div>
           <h3 className="text-lg font-semibold mb-4 text-amber-900">Alumni Connect</h3>
           <p className="text-sm text-gray-700">
@@ -15,7 +14,6 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Menu */}
         <div>
           <h3 className="text-lg font-semibold mb-4 text-amber-900">Menu</h3>
           <ul className="space-y-2 text-sm">
@@ -27,7 +25,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Support */}
         <div>
           <h3 className="text-lg font-semibold mb-4 text-amber-900">Support</h3>
           <ul className="space-y-2 text-sm">
@@ -37,7 +34,6 @@ export default function Footer() {
           </ul>
         </div>
 
-        {/* Contact */}
         <div>
           <h3 className="text-lg font-semibold mb-4 text-amber-900">Stay Connected</h3>
           <p className="text-sm text-gray-700 mb-3">
@@ -59,7 +55,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Bottom */}
       <div className="mt-10 border-t border-amber-200 pt-6 flex flex-col md:flex-row items-center justify-between px-6">
         <p className="text-sm text-gray-600">
           © {new Date().getFullYear()} Alumni Connect, MANIT. All rights reserved.

@@ -1,13 +1,11 @@
-// backend/routes/jobs.js
 
 const express = require("express");
 const router = express.Router();
-const pool = require("../config/db"); // ✅ your DB connection pool
+const pool = require("../config/db"); 
 
-// GET all jobs
 router.get("/", async (req, res) => {
   try {
-    const [rows] = await pool.query(  // ✅ use pool here
+    const [rows] = await pool.query( 
       `SELECT Job_ID, Job_Title, Company_Name, Location, Description, 
               Application_Link, Apply_From, Apply_To, Created_At 
        FROM Job_Postings 

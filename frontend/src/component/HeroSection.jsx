@@ -7,14 +7,16 @@ export default function HeroSection() {
   const [search, setSearch] = useState("");
   const [sentRequests, setSentRequests] = useState([]);
 
-  // Fetch alumni data from backend
   useEffect(() => {
     const fetchAlumni = async () => {
       try {
-        const res = await fetch("http://localhost:5000/alumni-hero");
-        const data = await res.json();
+const res = await fetch("http://localhost:5000/alumni-hero", {
+  headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+});        const data = await res.json();
         setAlumni(data);
         setFilteredAlumni(data);
+        console.log(data);
+
       } catch (err) {
         console.error("Error fetching alumni:", err);
       }
@@ -22,7 +24,6 @@ export default function HeroSection() {
     fetchAlumni();
   }, []);
 
-  // Handle search filter
   useEffect(() => {
     if (!search.trim()) {
       setFilteredAlumni(alumni);
@@ -37,7 +38,6 @@ export default function HeroSection() {
     }
   }, [search, alumni]);
 
-  // Toggle connect/sent state
   const handleToggleConnect = (index) => {
     if (sentRequests.includes(index)) {
       setSentRequests(sentRequests.filter((i) => i !== index));
@@ -72,7 +72,6 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Alumni List (Horizontal Scroll) */}
         <div className="mt-12 overflow-x-auto">
           <ul
             role="list"

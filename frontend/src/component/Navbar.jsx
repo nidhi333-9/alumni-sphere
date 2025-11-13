@@ -21,7 +21,7 @@ export default function Navbar() {
   const linkClass = ({ isActive }) =>
     `flex items-center gap-2 font-semibold transition ${
       isActive
-        ? "text-amber-600" // active page
+        ? "text-amber-600" 
         : "text-gray-700 hover:text-amber-600"
     }`;
 
@@ -31,7 +31,6 @@ export default function Navbar() {
         aria-label="Global"
         className="mx-auto flex max-w-8xl items-center justify-between p-2 lg:px-8"
       >
-        {/* 🏠 Home + Logo */}
         <div className="flex items-center gap-4">
           <NavLink to="/homepage" className={linkClass}>
             <Home className="h-6 w-6" />
@@ -39,7 +38,6 @@ export default function Navbar() {
           <img src={image} alt="Logo" className="h-12 w-auto" />
         </div>
 
-        {/* 🌐 Navigation Links */}
         <div className="hidden lg:flex lg:gap-x-6 items-center">
           <NavLink to="/directory" className={linkClass}>
             <BookOpen className="h-5 w-5" />
@@ -51,7 +49,6 @@ export default function Navbar() {
             My Connections
           </NavLink>
 
-          {/* Feed Dropdown */}
           <div className="relative">
             <button
               onClick={() => setShowFeedDropdown(!showFeedDropdown)}

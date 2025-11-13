@@ -20,14 +20,12 @@ export default function HeroSection() {
   return (
     <div className="bg-blue-50 py-6">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* Section Title */}
         <div className="max-w-2xl">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Upcoming Events
           </h2>
         </div>
 
-        {/* Tabs */}
         <div className="mt-4 flex gap-4">
           <button
             className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-xl shadow hover:bg-indigo-700 transition"
@@ -41,7 +39,6 @@ export default function HeroSection() {
           </Link>
         </div>
 
-        {/* Latest Events List */}
         <div className="mt-10 space-y-12">
           {latestEvents.map((event) => (
             <article key={event.Event_ID} className="flex flex-col lg:flex-row items-start gap-6">

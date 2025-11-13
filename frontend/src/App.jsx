@@ -1,12 +1,5 @@
-// src/App.jsx
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
-
-// Import pages
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Loader from "./pages/Loader";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
@@ -26,16 +19,15 @@ import EventsDetails from "./pages/EventsDetails";
 // Import Layout wrapper
 import Layout from "./component/Layout"; // ✅ fixed
 import ForgotPassword from "./pages/Forgot-password";
+import DonationDetails from "./pages/DonationDetails";
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Pages without Layout */}
         <Route path="/" element={<Loader />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
-        {/* Pages with Layout */}
         <Route path="/homepage" element={<Layout><Homepage /></Layout>} />
         <Route path="/manage-account" element={<Layout><ManageAccount /></Layout>} />
         <Route path="/directory" element={<Layout><Directory /></Layout>} />
@@ -43,6 +35,14 @@ function App() {
         <Route path="/create-post" element={<Layout><CreatePost /></Layout>} />
         <Route path="/connections" element={<Layout><ConnectionPage /></Layout>} />
         <Route path="/donations" element={<Layout><DonationPage /></Layout>} />
+         <Route
+          path="/donations/:id"
+          element={
+            <Layout>
+              <DonationDetails />
+            </Layout>
+          }
+        />
         <Route path="/alumni/:id" element={<Layout><AlumniProfile /></Layout>} />
         <Route path="/register" element={<Layout><RegisterPage /></Layout>} />
 
@@ -60,4 +60,4 @@ function App() {
   );
 }
 
-export default App; // ✅ don’t forget export
+export default App; 
