@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import Footer from "../components/layout/Footer";
+import Navbar from "../components/layout/Navbar";
 export default function DonationDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -11,8 +11,8 @@ export default function DonationDetails() {
   const [error, setError] = useState("");
   const [amount, setAmount] = useState("");
 
-  // 💡 Base URL from .env
-  const baseUrl = import.meta.env.VITE_API_URL;
+  // 💡 Base URL
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchCause = async () => {

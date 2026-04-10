@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ThumbsUp, MessageCircle, Share2 } from "lucide-react";
-import maledp from "../Images/dp-male.png";
+import maledp from "../../assets/dp-male.png";
 export default function FeedSection() {
   const [posts, setPosts] = useState([]);
   const [openComments, setOpenComments] = useState({});

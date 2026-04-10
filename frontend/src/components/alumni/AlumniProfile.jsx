@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import dpMale from "../Images/dp-male.png";
-import Navbar from "./Navbar";
-import Footer from "./Footer";
+import dpMale from "../../assets/dp-male.png";
+import Navbar from "../layout/Navbar";
+import Footer from "../layout/Footer";
 const AlumniProfile = () => {
   const { id } = useParams();
   const [alumni, setAlumni] = useState(null);

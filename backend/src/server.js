@@ -1,4 +1,3 @@
-// server.js
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -6,21 +5,19 @@ const pool = require("./config/db");
 require("dotenv").config();
 
 const app = express();
+
+// ── Middleware ───────────────────────────────────────────
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend URL
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
-
-
 app.use(express.json());
-
-// ✅ Serve uploaded files (e.g., profile pictures)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// ✅ Database test route
+// ── Health Check ────────────────────────────────────────
 app.get("/", async (req, res) => {
   try {
     const [result] = await pool.query("SELECT NOW() AS time");
@@ -31,45 +28,41 @@ app.get("/", async (req, res) => {
   }
 });
 
-// ✅ Import Routes
-const authRoutes = require("./routes/authRoutes");
-const alumniRoutes = require("./routes/alumniRoutes");
-const alumniHeroRoutes = require("./routes/alumniHeroRoutes");
-const postRoutes = require("./routes/postRoutes");
-const eventRoutes = require("./routes/eventRoutes");
-const jobsRoutes = require("./routes/jobsRoutes");
-const profileRoutes = require("./routes/profileRoutes"); // 👈 NEW (ManageAccount)
-const feedRoutes = require("./routes/feedRoutes");
-const donationRoutes = require("./routes/donationRoutes");
-const aProjectRoutes = require("./routes/adminProjectRoutes");
-const usersRoute = require("./routes/usersRoutes");
-const adminDashboardRoutes = require("./routes/adminDashboard");
+// ── Import Routes ───────────────────────────────────────
+const authRoutes       = require("./routes/authRoutes");
+const alumniRoutes     = require("./routes/alumniRoutes");
+const postRoutes       = require("./routes/postRoutes");
+const feedRoutes       = require("./routes/feedRoutes");
+const eventRoutes      = require("./routes/eventRoutes");
+const jobRoutes        = require("./routes/jobRoutes");
+const donationRoutes   = require("./routes/donationRoutes");
+const profileRoutes    = require("./routes/profileRoutes");
+const newsRoutes       = require("./routes/newsRoutes");
+const connectionRoutes = require("./routes/connectionRoutes");
+const chatRoutes       = require("./routes/chatRoutes");
+const adminRoutes      = require("./routes/adminRoutes");
 
+// ── Mount Routes ────────────────────────────────────────
+app.use("/auth",        authRoutes);
+app.use("/alumni",      alumniRoutes);       // GET /alumni, /alumni/hero, /alumni/:id
+app.use("/posts",       postRoutes);         // GET/DELETE /posts, comments, likes
+app.use("/feeds",       feedRoutes);         // POST /feeds (create post with image)
+app.use("/events",      eventRoutes);        // CRUD + /events/:id/register
+app.use("/jobs-api",    jobRoutes);          // GET/POST/DELETE jobs
+app.use("/donations",   donationRoutes);     // GET projects, Razorpay flow
+app.use("/api/user",    profileRoutes);      // Profile, settings, password, pic
+app.use("/news",        newsRoutes);         // CRUD news
+app.use("/connections", connectionRoutes);   // Send/accept/reject connections
+app.use("/chat",        chatRoutes);         // Get/send messages
+app.use("/admin",       adminRoutes);        // Dashboard stats, projects, users
 
-
-
-// ✅ Use Routes
-app.use("/auth", authRoutes);
-app.use("/alumni", alumniRoutes);
-app.use("/alumni-hero", alumniHeroRoutes);
-app.use("/posts", postRoutes);
-app.use("/events", eventRoutes);
-app.use("/jobs-api", jobsRoutes);
-app.use("/api/user", profileRoutes); // 👈 New endpoint for ManageAccount page
-app.use("/feeds", feedRoutes); // Feed related routes
-app.use("/donations", donationRoutes);
-app.use("/admin-projects", aProjectRoutes);
-app.use("/users", usersRoute);
-app.use("/admin-dashboard", adminDashboardRoutes);
-
-
-// ✅ Error handling middleware
+// ── Error Handling ──────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error("Unhandled Error:", err);
   res.status(500).json({ error: "Something went wrong on the server." });
 });
 
-// ✅ Start Server
+// ── Start Server ────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

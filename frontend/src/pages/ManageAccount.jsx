@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 export default function ManageAccount() {
   const navigate = useNavigate();
@@ -63,6 +63,9 @@ export default function ManageAccount() {
         }
 
         const data = await res.json();
+        const picUrl = data.profilePic
+          ? (data.profilePic.startsWith("http") ? data.profilePic : `${API_BASE_URL}${data.profilePic}`)
+          : "";
         setUser({
           id: data.id,
           name: `${data.firstName} ${data.lastName}`,
@@ -71,7 +74,7 @@ export default function ManageAccount() {
           branch: data.course || "",
           graduationYear: data.graduationYear || "",
           about: data.about || "",
-          profilePic: data.profilePic || "",
+          profilePic: picUrl,
         });
       } catch (err) {
         console.error("Error loading profile:", err);

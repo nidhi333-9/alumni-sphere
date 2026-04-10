@@ -1,6 +1,6 @@
-import AlumniList from "../components/AlumniList";
-import Footer from "../components/Footer";
-import Navbar from "../components/Navbar";
+import AlumniList from "../components/alumni/AlumniList";
+import Footer from "../components/layout/Footer";
+import Navbar from "../components/layout/Navbar";
 const Directory = () => {
   return (
     <>

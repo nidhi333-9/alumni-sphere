@@ -10,22 +10,22 @@ import Feed from "./pages/Feed";
 import CreatePost from "./pages/CreatePost";
 import ConnectionPage from "./pages/ConnectionPage";
 import DonationPage from "./pages/DonationPage";
-import AlumniProfile from "./components/AlumniProfile";
+import AlumniProfile from "./components/alumni/AlumniProfile";
 import RegisterPage from "./pages/RegisterPage";
 import NewsDetails from "./pages/NewsDetails";
 import Events from "./pages/Events";
 import JobsPage from "./pages/JobsPage";
-import Layout from "./components/Layout";
+import Layout from "./components/layout/Layout";
 import ForgotPassword from "./pages/Forgot-password";
 import OtpVerification from "./pages/OtpVerification";
 import DonationDetails from "./pages/DonationDetails";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import UsersPage from "./pages/Admin/UsersPage";
-import JobPage from "./pages/Admin/JobsPage";
-import EventsPage from "./pages/Admin/EventsPage";
-import PostsPage from "./pages/Admin/PostsPage";
-import ProjectsPage from "./pages/Admin/ProjectsPage";
-import ProtectedRoute from "./components/ProtectedRoute"; // ⚙️ New file added below
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import UsersPage from "./pages/admin/UsersPage";
+import JobPage from "./pages/admin/JobsPage";
+import EventsPage from "./pages/admin/EventsPage";
+import PostsPage from "./pages/admin/PostsPage";
+import ProjectsPage from "./pages/admin/ProjectsPage";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 function App() {
   return (

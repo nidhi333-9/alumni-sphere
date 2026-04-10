@@ -6,9 +6,9 @@ import {
   Autoplay,
   EffectCoverflow,
 } from "swiper/modules";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import fallbackImage from "../Images/event-image.webp";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
+import fallbackImage from "../assets/event-image.webp";
 
 
 import "swiper/css";

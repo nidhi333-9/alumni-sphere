@@ -34,7 +34,8 @@ exports.getUserProfile = async (req, res) => {
     const user = rows[0];
 
     if (user.profilePic) {
-      user.profilePic = `http://localhost:5000${user.profilePic}`;
+      // Return relative path; frontend prepends API_BASE_URL
+      user.profilePic = user.profilePic;
     } else {
       user.profilePic = "";
     }
@@ -48,14 +49,43 @@ exports.getUserProfile = async (req, res) => {
 
 exports.updateUserSettings = async (req, res) => {
   const userId = req.user.id;
-  const { profileType, profileSettings, about } = req.body;
+  const { profileType, profileSettings, notification, connectRequests, protection, about } = req.body;
 
   try {
-    const [result] = await pool.query(
-      `UPDATE Alumni_Table
-       SET About = ?
-       WHERE User_ID = ?`,
+    // Save about field to Alumni_Table (if alumni)
+    await pool.query(
+      `UPDATE Alumni_Table SET About = ? WHERE User_ID = ?`,
       [about, userId]
+    );
+
+    // Save all settings to User_Settings table (upsert)
+    await pool.query(
+      `INSERT INTO User_Settings 
+        (User_ID, Profile_Visibility, Show_Branch, Show_Batch, Show_Location, 
+         Show_Workplace, Show_Experience, Notifications, Connect_Requests, Info_Protection)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE
+         Profile_Visibility = VALUES(Profile_Visibility),
+         Show_Branch = VALUES(Show_Branch),
+         Show_Batch = VALUES(Show_Batch),
+         Show_Location = VALUES(Show_Location),
+         Show_Workplace = VALUES(Show_Workplace),
+         Show_Experience = VALUES(Show_Experience),
+         Notifications = VALUES(Notifications),
+         Connect_Requests = VALUES(Connect_Requests),
+         Info_Protection = VALUES(Info_Protection)`,
+      [
+        userId,
+        profileType || 'public',
+        profileSettings?.showBranch ? 1 : 0,
+        profileSettings?.showBatch ? 1 : 0,
+        profileSettings?.showLocation ? 1 : 0,
+        profileSettings?.showWorkplace ? 1 : 0,
+        profileSettings?.showExperience ? 1 : 0,
+        notification ? 1 : 0,
+        connectRequests ? 1 : 0,
+        protection ? 1 : 0,
+      ]
     );
 
     res.json({ message: "Profile updated successfully" });

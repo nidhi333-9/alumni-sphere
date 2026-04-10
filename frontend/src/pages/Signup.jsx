@@ -1,26 +1,41 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CheckCircleIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
-import logo from "../Images/logo.png";
+import { CheckCircleIcon, ExclamationCircleIcon, UserIcon, IdentificationIcon, BriefcaseIcon, MapPinIcon } from "@heroicons/react/24/solid";
+import { motion, AnimatePresence } from "framer-motion";
+import logo from "../assets/logo.png";
+import { API_BASE_URL } from "../utils/api";
 
-const InputField = ({ ...props }) => (
-  <input
-    {...props}
-    className="block w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-base text-gray-800
-               shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500
-               transition-all duration-200 ease-in-out"
-  />
+const InputField = ({ label, icon: Icon, ...props }) => (
+  <div className="relative w-full">
+    {label && <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">{label}</label>}
+    <div className="relative">
+      {Icon && (
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon className="h-5 w-5 text-indigo-400" />
+        </div>
+      )}
+      <input
+        {...props}
+        className={`block w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-800
+                   shadow-sm focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200
+                   transition-all duration-300 ease-in-out ${Icon ? "pl-10" : ""}`}
+      />
+    </div>
+  </div>
 );
 
-const SelectBox = ({ children, ...props }) => (
-  <select
-    {...props}
-    className="block w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-base text-gray-800
-               shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500
-               transition-all duration-200 ease-in-out"
-  >
-    {children}
-  </select>
+const SelectBox = ({ label, children, ...props }) => (
+  <div className="relative w-full">
+    {label && <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">{label}</label>}
+    <select
+      {...props}
+      className="block w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-800
+                 shadow-sm focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200
+                 transition-all duration-300 ease-in-out cursor-pointer appearance-none"
+    >
+      {children}
+    </select>
+  </div>
 );
 
 const initialFormData = {
@@ -47,11 +62,13 @@ const initialFormData = {
 };
 
 export default function Signup() {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState(initialFormData);
   const [message, setMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false); // ✅ added
-  const navigate = useNavigate(); // ✅ added
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [step, setStep] = useState(1);
+  const navigate = useNavigate();
+
   const currentYear = new Date().getFullYear();
   const isAlumni = formData.endYear && parseInt(formData.endYear, 10) < currentYear;
   const isStudent = formData.endYear && parseInt(formData.endYear, 10) >= currentYear;
@@ -71,100 +88,16 @@ export default function Signup() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === "email") {
-      setEmailVerified(false);
-      setOtpSent(false);
-      setOtp("");
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSendOtp = async () => {
-    if (!formData.email) {
-      setErrorMessage("Please enter your email first.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setMessage("");
-
-    try {
-      const response = await fetch("http://localhost:5000/auth/send-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email, purpose: "signup" }),
-      });
-      const data = await response.json();
-
-      if (response.ok) {
-        setOtpSent(true);
-        setIsSuccess(true);
-        if (data.otp) {
-          setMessage(`OTP sent. Dev OTP: ${data.otp}`);
-        } else {
-          setMessage(data.message || "OTP sent to your email.");
-        }
-      } else {
-        setErrorMessage(data.error || "Failed to send OTP.");
-      }
-    } catch (error) {
-      console.error("Send OTP error:", error);
-      setErrorMessage("Something went wrong while sending OTP.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!otp) {
-      setErrorMessage("Please enter the OTP.");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setMessage("");
-
-    try {
-      const response = await fetch("http://localhost:5000/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email, otp, purpose: "signup" }),
-      });
-      const data = await response.json();
-
-      if (response.ok) {
-        setEmailVerified(true);
-        setIsSuccess(true);
-        setMessage(data.message || "Email verified successfully.");
-      } else {
-        setErrorMessage(data.error || "OTP verification failed.");
-      }
-    } catch (error) {
-      console.error("Verify OTP error:", error);
-      setErrorMessage("Something went wrong while verifying OTP.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!emailVerified) {
-      setErrorMessage("Please verify your email before creating your account.");
-      return;
-    }
-
     setMessage("");
     setIsSubmitting(true);
 
     try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
       const response = await fetch(`${API_BASE_URL}/auth/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -173,263 +106,249 @@ export default function Signup() {
 
       const data = await response.json();
       if (response.ok) {
-        // Redirect to OTP verification page
         navigate("/verify-otp", { state: { email: formData.email } });
       } else {
         setIsSuccess(false);
         setMessage(data.error || "❌ Signup failed. Try again.");
       }
     } catch (error) {
-      console.error("Error:", error);
       setErrorMessage("⚠️ Server error. Please try later.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const nextStep = () => {
+    if (step === 1) {
+      if (!formData.firstName || !formData.lastName || !formData.gender || !formData.email || !formData.primaryPhone || !formData.password) {
+        return setErrorMessage("Please fill all required fields in Step 1.");
+      }
+    }
+    if (step === 2) {
+      if (!formData.scholarId || !formData.endYear || !formData.department || !formData.branch) {
+        return setErrorMessage("Please fill all required fields in Step 2.");
+      }
+      if (isStudent && (!formData.currentYear || !formData.semester)) {
+        return setErrorMessage("Please fill your Student Details in Step 2.");
+      }
+    }
+    setErrorMessage("");
+    setStep((p) => Math.min(p + 1, 3));
+  };
+  const prevStep = () => {
+    setErrorMessage("");
+    setStep((p) => Math.max(p - 1, 1));
+  };
 
-
-
+  const pageVariants = {
+    initial: { opacity: 0, x: 20 },
+    in: { opacity: 1, x: 0 },
+    out: { opacity: 0, x: -20 }
+  };
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 lg:grid lg:grid-cols-2">
-      <div className="hidden bg-indigo-700 text-white lg:flex flex-col justify-center items-center p-10 sticky top-0 h-screen">
-        <img src={logo} alt="Alumni Logo" className="h-32 w-32 mb-6 drop-shadow-lg" />
-        <h1 className="text-3xl font-bold text-center">Welcome to Alumni Sphere</h1>
-        <p className="text-center mt-4 text-indigo-100 max-w-sm">
-          Connect with fellow students and alumni. Share, grow, and stay connected with your alma mater.
-        </p>
+    <div className="min-h-screen w-full flex bg-slate-50 relative overflow-hidden">
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-500/20 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-500/20 rounded-full blur-[120px]" />
+
+      {/* LEFT SIDE - Brand */}
+      <div className="hidden lg:flex w-[45%] bg-indigo-900 flex-col justify-center items-center p-12 relative overflow-hidden text-white shadow-2xl z-10">
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white via-transparent to-transparent" />
+        <motion.img 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          src={logo} 
+          alt="Alumni Logo" 
+          className="h-40 w-40 mb-8 drop-shadow-2xl z-10 bg-white/10 p-4 rounded-3xl backdrop-blur-sm border border-white/20" 
+        />
+        <motion.div
+           initial={{ opacity: 0, y: 30 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 0.8, delay: 0.3 }}
+           className="z-10 text-center"
+        >
+          <h1 className="text-5xl font-extrabold tracking-tight mb-6 leading-tight">Join Your <br/> <span className="text-indigo-300">Legacy.</span></h1>
+          <p className="text-lg text-indigo-100 max-w-md font-medium opacity-90">
+            Build incredible connections, unlock career paths, and stay tethered to your roots through Alumni Sphere.
+          </p>
+        </motion.div>
       </div>
 
-      {/* RIGHT SIDE - Signup Form */}
-      <div className="w-1/2 bg-gray-100 flex items-center justify-center p-10 pt-80 overflow-y-auto">
-        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 ">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-            Create Your Account
-          </h2>
+      {/* RIGHT SIDE - Form */}
+      <div className="w-full lg:w-[55%] flex flex-col justify-center items-center p-6 sm:p-12 z-10 relative">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-xl bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white p-8 sm:p-10"
+        >
+          {/* Stepper Header */}
+          <div className="mb-10">
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Create Account</h2>
+            <p className="text-sm text-gray-500 mt-2">Step {step} of 3 • {step === 1 ? 'Personal Details' : step === 2 ? 'Academic Details' : 'Professional & Verify'}</p>
+            
+            {/* Progress Bar */}
+            <div className="w-full bg-gray-100 h-2 rounded-full mt-6 overflow-hidden flex">
+              <motion.div 
+                className="bg-indigo-600 h-full rounded-full"
+                initial={{ width: '33%' }}
+                animate={{ width: `${(step / 3) * 100}%` }}
+                transition={{ duration: 0.4 }}
+              />
+            </div>
+          </div>
+
           {message && (
-            <div
-              className={`flex items-center gap-3 mt-4 mb-2 px-4 py-3 rounded-lg shadow-md text-sm font-medium
-      ${isSuccess
-                  ? "bg-green-100 text-green-800 border border-green-300"
-                  : "bg-red-100 text-red-800 border border-red-300"
-                }`}
-            >
-              {isSuccess ? (
-                <CheckCircleIcon className="h-5 w-5 text-green-600" />
-              ) : (
-                <ExclamationCircleIcon className="h-5 w-5 text-red-600" />
-              )}
-              <span>{message}</span>
-            </div>
-          )}
-
-          <form
-            onSubmit={handleSubmit}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
-                e.preventDefault();
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`flex items-start gap-3 mb-6 px-4 py-3 rounded-xl shadow-sm text-sm font-medium border
+                ${isSuccess ? "bg-emerald-50 text-emerald-800 border-emerald-200" : "bg-red-50 text-red-800 border-red-200"}`
               }
-            }}
-            className="space-y-6"
-          >
-            {/* Name */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <InputField
-                type="text"
-                name="firstName"
-                placeholder="First Name"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-              />
-
-              <InputField
-                type="text"
-                name="lastName"
-                placeholder="Last Name"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            >
+              {isSuccess ? <CheckCircleIcon className="h-5 w-5 text-emerald-600 mt-0.5" /> : <ExclamationCircleIcon className="h-5 w-5 text-red-600 mt-0.5" />}
+              <span className="leading-relaxed">{message}</span>
+            </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InputField type="text" name="firstName" placeholder="First Name" value={formData.firstName} onChange={handleChange} required />
-              <InputField type="text" name="lastName" placeholder="Last Name" value={formData.lastName} onChange={handleChange} required />
-            </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <AnimatePresence mode="wait">
+              
+              {/* --- STEP 1: Basic Information --- */}
+              {step === 1 && (
+                <motion.div key="step1" variants={pageVariants} initial="initial" animate="in" exit="out" transition={{ duration: 0.3 }} className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <InputField label="First Name" icon={UserIcon} type="text" name="firstName" placeholder="John" value={formData.firstName} onChange={handleChange} required />
+                    <InputField label="Last Name" type="text" name="lastName" placeholder="Doe" value={formData.lastName} onChange={handleChange} required />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <SelectBox label="Gender" name="gender" value={formData.gender} onChange={handleChange} required>
+                      <option value="">Select Gender</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Other</option>
+                    </SelectBox>
+                    <InputField label="Primary Phone" type="tel" name="primaryPhone" placeholder="+1 234 567 8900" value={formData.primaryPhone} onChange={handleChange} required />
+                  </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <SelectBox name="gender" value={formData.gender} onChange={handleChange} required>
-                <option value="">Select Gender</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </SelectBox>
-              <InputField type="text" name="scholarId" placeholder="Scholar ID" value={formData.scholarId} onChange={handleChange} required />
-            </div>
+                  <InputField label="Secondary Phone" type="tel" name="secondaryPhone" placeholder="+1 987 654 3210 (Optional)" value={formData.secondaryPhone} onChange={handleChange} />
+                  
+                  <InputField label="Email Address" type="email" name="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} required />
+                  <InputField label="Password" type="password" name="password" placeholder="••••••••" value={formData.password} onChange={handleChange} required />
+                </motion.div>
+              )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2">
-                <InputField type="email" name="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} required />
-              </div>
-              <button
-                type="button"
-                onClick={handleSendOtp}
-                disabled={isSubmitting || !formData.email || emailVerified}
-                className="rounded-lg bg-indigo-600 text-white font-semibold px-4 py-3 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {emailVerified ? "Verified" : otpSent ? "Resend OTP" : "Send OTP"}
-              </button>
-            </div>
 
-            {otpSent && !emailVerified && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-2">
-                  <InputField type="text" placeholder="Enter OTP" value={otp} onChange={(e) => setOtp(e.target.value)} maxLength={6} required />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleVerifyOtp}
-                  disabled={isSubmitting || !otp}
-                  className="rounded-lg bg-emerald-600 text-white font-semibold px-4 py-3 hover:bg-emerald-700 disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  Verify OTP
+              {/* --- STEP 2: Academic Info --- */}
+              {step === 2 && (
+                <motion.div key="step2" variants={pageVariants} initial="initial" animate="in" exit="out" transition={{ duration: 0.3 }} className="space-y-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <InputField label="Scholar ID" icon={IdentificationIcon} type="text" name="scholarId" placeholder="102345" value={formData.scholarId} onChange={handleChange} required />
+                    <InputField label="Graduation Year" type="number" name="endYear" placeholder="e.g. 2026" value={formData.endYear} onChange={handleChange} required />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <InputField label="Department" type="text" name="department" placeholder="Engineering" value={formData.department} onChange={handleChange} required />
+                    <InputField label="Branch" type="text" name="branch" placeholder="Computer Science" value={formData.branch} onChange={handleChange} required />
+                  </div>
+
+                  {isStudent && (
+                    <div className="bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100 space-y-4">
+                      <h3 className="text-sm font-bold tracking-wide text-indigo-900 uppercase">Student Details</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <SelectBox label="Current Year" name="currentYear" value={formData.currentYear} onChange={handleChange} required>
+                          <option value="">Select Year</option>
+                          <option value="1st">1st Year</option>
+                          <option value="2nd">2nd Year</option>
+                          <option value="3rd">3rd Year</option>
+                          <option value="4th">4th Year</option>
+                          <option value="5th">5th Year</option>
+                        </SelectBox>
+
+                        <SelectBox label="Semester" name="semester" value={formData.semester} onChange={handleChange} required disabled={!formData.currentYear}>
+                          <option value="">Select Semester</option>
+                          {formData.currentYear && semesterOptions[formData.currentYear]?.map((sem) => (
+                            <option key={sem} value={sem}>Semester {sem}</option>
+                          ))}
+                        </SelectBox>
+                      </div>
+                    </div>
+                  )}
+
+                </motion.div>
+              )}
+
+
+              {/* --- STEP 3: Professional & Verification --- */}
+              {step === 3 && (
+                <motion.div key="step3" variants={pageVariants} initial="initial" animate="in" exit="out" transition={{ duration: 0.3 }} className="space-y-5">
+                  
+                  {isAlumni && (
+                    <div className="bg-emerald-50/50 p-5 rounded-2xl border border-emerald-100 space-y-4 mb-4">
+                      <h3 className="text-sm font-bold tracking-wide text-emerald-900 uppercase flex items-center gap-2"><BriefcaseIcon className="w-4 h-4"/> Alumni Profile</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <InputField label="Job Title" type="text" name="jobTitle" placeholder="Software Engineer" value={formData.jobTitle} onChange={handleChange} />
+                        <InputField label="Company" type="text" name="companyName" placeholder="Tech Corp" value={formData.companyName} onChange={handleChange} />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <InputField label="City" type="text" name="city" placeholder="New York" value={formData.city} onChange={handleChange} />
+                        <InputField label="Country" type="text" name="country" placeholder="USA" value={formData.country} onChange={handleChange} />
+                      </div>
+                      <InputField label="Sector" type="text" name="sector" placeholder="IT, Finance..." value={formData.sector} onChange={handleChange} />
+                      <InputField label="Skills" type="text" name="skills" placeholder="React, Python, Design..." value={formData.skills} onChange={handleChange} />
+                    </div>
+                  )}
+
+                  <div className="relative w-full">
+                    <label className="block text-sm font-semibold text-gray-700 mb-1 ml-1">Full Address</label>
+                    <div className="relative">
+                      <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                        <MapPinIcon className="h-5 w-5 text-indigo-400" />
+                      </div>
+                      <textarea
+                        name="address"
+                        rows="2"
+                        placeholder="123 Main St..."
+                        value={formData.address}
+                        onChange={handleChange}
+                        className="block w-full rounded-xl border border-gray-200 bg-gray-50/50 pl-10 pr-4 py-3 text-sm text-gray-800 shadow-sm focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 transition-all resize-none"
+                      />
+                    </div>
+                  </div>
+                  
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Stepper Navigation */}
+            <div className="flex justify-between items-center pt-8 border-t border-gray-100 mt-8">
+              {step > 1 ? (
+                 <button type="button" onClick={prevStep} className="px-6 py-2.5 text-gray-600 font-semibold text-sm rounded-xl hover:bg-gray-100 transition-colors active:scale-95">
+                   Back
+                 </button>
+              ) : <div />}
+
+              {step < 3 ? (
+                <button type="button" onClick={nextStep} className="px-8 py-3 bg-gray-900 text-white font-semibold text-sm rounded-xl hover:bg-gray-800 transition-all shadow-md hover:shadow-lg active:scale-95">
+                  Continue
                 </button>
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InputField type="tel" name="primaryPhone" placeholder="Primary Phone" value={formData.primaryPhone} onChange={handleChange} required />
-              <InputField type="tel" name="secondaryPhone" placeholder="Secondary Phone" value={formData.secondaryPhone} onChange={handleChange} />
+              ) : (
+                <button type="submit" disabled={isSubmitting} className="px-8 py-3 bg-indigo-600 text-white font-semibold text-sm rounded-xl hover:bg-indigo-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:shadow-none active:scale-95 flex items-center gap-2">
+                  {isSubmitting ? "Processing..." : "Create Account 🚀"}
+                </button>
+              )}
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InputField type="text" name="department" placeholder="Department" value={formData.department} onChange={handleChange} required />
-              <InputField type="text" name="branch" placeholder="Branch" value={formData.branch} onChange={handleChange} required />
-            </div>
-
-            <InputField type="number" name="endYear" placeholder="Graduation Year (e.g. 2026)" value={formData.endYear} onChange={handleChange} required />
-
-            {isStudent && (
-              <>
-                <h3 className="text-lg font-semibold text-gray-700">
-                  Student Details
-                </h3>
-                <SelectBox
-                  name="currentYear"
-                  value={formData.currentYear}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">Select Year</option>
-                  <option value="1st">1st</option>
-                  <option value="2nd">2nd</option>
-                  <option value="3rd">3rd</option>
-                  <option value="4th">4th</option>
-                  <option value="5th">5th</option>
-                </SelectBox>
-
-                <SelectBox
-                  name="semester"
-                  value={formData.semester}
-                  onChange={handleChange}
-                  required
-                  disabled={!formData.currentYear}
-                >
-                  <option value="">Select Semester</option>
-                  {formData.currentYear &&
-                    semesterOptions[formData.currentYear]?.map((sem) => (
-                      <option key={sem} value={sem}>
-                        {sem}
-                      </option>
-                    ))}
-                </SelectBox>
-              </>
-            )}
-
-            {isAlumni && (
-              <>
-                <h3 className="text-lg font-semibold text-gray-700">
-                  Alumni Details
-                </h3>
-                <InputField
-                  type="text"
-                  name="jobTitle"
-                  placeholder="Job Title"
-                  value={formData.jobTitle}
-                  onChange={handleChange}
-                />
-                <InputField
-                  type="text"
-                  name="companyName"
-                  placeholder="Company Name"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                />
-                <InputField
-                  type="text"
-                  name="city"
-                  placeholder="Current City"
-                  value={formData.city}
-                  onChange={handleChange}
-                />
-                <InputField
-                  type="text"
-                  name="country"
-                  placeholder="Country"
-                  value={formData.country}
-                  onChange={handleChange}
-                />
-                <InputField
-                  type="text"
-                  name="sector"
-                  placeholder="Sector (IT, Finance, etc.)"
-                  value={formData.sector}
-                  onChange={handleChange}
-                />
-                <InputField
-                  type="text"
-                  name="skills"
-                  placeholder="Skills (React, SQL, etc.)"
-                  value={formData.skills}
-                  onChange={handleChange}
-                />
-              </>
-            )}
-
-            <textarea
-              name="address"
-              rows="3"
-              placeholder="Address"
-              value={formData.address}
-              onChange={handleChange}
-              className="block w-full rounded-lg border-2 border-gray-300 bg-white px-4 py-3 text-base text-gray-800
-                         shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500
-                         transition-all duration-200 ease-in-out resize-none"
-            />
-
-            <InputField type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-
-            <button
-              type="submit"
-              disabled={isSubmitting || !emailVerified}
-              className="w-full py-4 rounded-lg bg-indigo-600 text-white font-semibold text-lg shadow-md
-                         hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed transform transition"
-            >
-              {isSubmitting ? "Processing..." : "Sign Up"}
-            </button>
           </form>
 
-          <p className="text-sm text-center text-gray-600 mt-6">
+          <p className="text-sm text-center text-gray-500 mt-8 font-medium">
             Already have an account?{" "}
-            <Link to="/signin" className="font-semibold text-indigo-700 hover:underline">
+            <Link to="/signin" className="font-bold text-indigo-600 hover:text-indigo-800 hover:underline transition-colors">
               Sign In
             </Link>
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

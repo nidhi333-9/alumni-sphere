@@ -7,14 +7,14 @@ function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-function storeOTP(email, otp) {
+function storeOTP(email, otp, userData = null) {
     const key = email.toLowerCase();
     // Clear any existing timer
     if (otpStore.has(key)) {
         clearTimeout(otpStore.get(key).timer);
     }
     const timer = setTimeout(() => otpStore.delete(key), OTP_EXPIRY_MS);
-    otpStore.set(key, { otp, timer, createdAt: Date.now() });
+    otpStore.set(key, { otp, timer, createdAt: Date.now(), userData });
 }
 
 function verifyOTP(email, otp) {
@@ -25,8 +25,14 @@ function verifyOTP(email, otp) {
 
     // OTP is valid — clean up
     clearTimeout(entry.timer);
+    const userData = entry.userData;
     otpStore.delete(key);
-    return { valid: true };
+    return { valid: true, userData };
+}
+
+function getOTPData(email) {
+    const key = email.toLowerCase();
+    return otpStore.get(key);
 }
 
 // Password reset OTP (separate from email verification)
@@ -52,4 +58,4 @@ function verifyResetOTP(email, otp, deleteOnSuccess = true) {
     return { valid: true };
 }
 
-module.exports = { generateOTP, storeOTP, verifyOTP, storeResetOTP, verifyResetOTP };
+module.exports = { generateOTP, storeOTP, verifyOTP, getOTPData, storeResetOTP, verifyResetOTP };

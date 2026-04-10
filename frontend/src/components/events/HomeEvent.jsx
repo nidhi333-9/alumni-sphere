@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import fallbackImage from "../Images/event-image.webp";
+import fallbackImage from "../../assets/event-image.webp";
 export default function HeroSection() {
   const [latestEvents, setLatestEvents] = useState([]);
 

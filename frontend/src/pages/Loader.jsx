@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import img from "../Images/logo.png"; 
+import img from "../assets/logo.png"; 
 
 function Loader() {
   return (

@@ -1,7 +1,7 @@
 const pool = require("../config/db");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { generateOTP, storeOTP, verifyOTP, storeResetOTP, verifyResetOTP } = require("../utils/otpStore");
+const { generateOTP, storeOTP, verifyOTP, getOTPData, storeResetOTP, verifyResetOTP } = require("../utils/otpStore");
 const { sendOTPEmail, sendPasswordResetOTPEmail } = require("../utils/emailService");
 
 const otpStore = new Map();
@@ -146,49 +146,16 @@ exports.signup = async (req, res) => {
       return res.status(409).json({ error: "Email already registered" });
     }
 
-    const currentYear = new Date().getFullYear();
-    let userTypeId = ROLES.STUDENT;
-    if (endYear && parseInt(endYear) < currentYear) {
-      userTypeId = ROLES.ALUMNI;
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const [result] = await pool.query(
-      `INSERT INTO User_Table 
-        (User_Type_ID, User_Fname, User_Lname, Gender, Phone_no, Phone_no_2, Email_ID, Password, Address, Is_Verified) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`,
-      [userTypeId, firstName, lastName, gender, primaryPhone, secondaryPhone, email, hashedPassword, address]
-    );
-
-    const userId = result.insertId;
-
-    if (userTypeId === ROLES.STUDENT) {
-      await pool.query(
-        `INSERT INTO Student_Table (Scholar_No, User_ID, Department, Course, Current_Year, Graduation_Year) 
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [scholarId, userId, department, branch, 2025, endYear]
-      );
-    } else if (userTypeId === ROLES.ALUMNI) {
-      const alumniId = Math.floor(10000 + Math.random() * 90000);
-
-      await pool.query(
-        `INSERT INTO Alumni_Table (
-    Alumni_ID, User_ID, Enrollment_No, Department, Course, Graduation_Year,
-    Job_Title, Company_Name, Current_City, Current_Country, Sector, Skills
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [alumniId, userId, scholarId, department, branch, endYear, jobTitle, companyName, city, country, sector, skills]
-      );
-    }
+    const userData = { ...req.body, hashedPassword };
 
     // Generate and send OTP
     const otp = generateOTP();
-    storeOTP(email, otp);
+    storeOTP(email, otp, userData);
     await sendOTPEmail(email, otp);
 
     res.status(201).json({
-      message: "Registration successful! Please check your email for the verification code.",
-      userId,
+      message: "Registration started! Please check your email for the verification code.",
       email,
       needsVerification: true,
     });
@@ -212,11 +179,50 @@ exports.verifyEmail = async (req, res) => {
       return res.status(400).json({ error: result.reason });
     }
 
-    // Mark user as verified
-    await pool.query(
-      "UPDATE User_Table SET Is_Verified = 1 WHERE Email_ID = ?",
-      [email]
+    const userData = result.userData;
+    
+    // If there is no pending user data, check if it's an old flow or just fallback
+    if (!userData) {
+      const [rows] = await pool.query("SELECT User_ID FROM User_Table WHERE Email_ID = ?", [email]);
+      if (rows.length > 0) {
+        await pool.query("UPDATE User_Table SET Is_Verified = 1 WHERE Email_ID = ?", [email]);
+        return res.json({ message: "Email verified successfully! You can now sign in." });
+      }
+      return res.status(400).json({ error: "Registration data expired. Please sign up again." });
+    }
+
+    const currentCalendarYear = new Date().getFullYear();
+    let userTypeId = ROLES.STUDENT;
+    if (userData.endYear && parseInt(userData.endYear) < currentCalendarYear) {
+      userTypeId = ROLES.ALUMNI;
+    }
+
+    const [insertResult] = await pool.query(
+      `INSERT INTO User_Table 
+        (User_Type_ID, User_Fname, User_Lname, Gender, Phone_no, Phone_no_2, Email_ID, Password, Address, Is_Verified) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+      [userTypeId, userData.firstName, userData.lastName, userData.gender, userData.primaryPhone, userData.secondaryPhone, userData.email, userData.hashedPassword, userData.address]
     );
+
+    const userId = insertResult.insertId;
+
+    if (userTypeId === ROLES.STUDENT) {
+      await pool.query(
+        `INSERT INTO Student_Table (Scholar_No, User_ID, Department, Course, Current_Year, Graduation_Year) 
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [userData.scholarId, userId, userData.department, userData.branch, 2025, userData.endYear]
+      );
+    } else if (userTypeId === ROLES.ALUMNI) {
+      const alumniId = Math.floor(10000 + Math.random() * 90000);
+
+      await pool.query(
+        `INSERT INTO Alumni_Table (
+    Alumni_ID, User_ID, Enrollment_No, Department, Course, Graduation_Year,
+    Job_Title, Company_Name, Current_City, Current_Country, Sector, Skills
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [alumniId, userId, userData.scholarId, userData.department, userData.branch, userData.endYear, userData.jobTitle, userData.companyName, userData.city, userData.country, userData.sector, userData.skills]
+      );
+    }
 
     res.json({ message: "Email verified successfully! You can now sign in." });
   } catch (err) {
@@ -224,6 +230,7 @@ exports.verifyEmail = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 
 // RESEND OTP
 exports.resendOTP = async (req, res) => {
@@ -234,22 +241,29 @@ exports.resendOTP = async (req, res) => {
   }
 
   try {
-    // Check if user exists and is not already verified
-    const [rows] = await pool.query(
-      "SELECT User_ID, Is_Verified FROM User_Table WHERE Email_ID = ?",
-      [email]
-    );
+    let pendingUserData = null;
+    const pendingData = getOTPData(email);
+    
+    if (pendingData && pendingData.userData) {
+      pendingUserData = pendingData.userData;
+    } else {
+      // Check if user exists in DB and is not already verified
+      const [rows] = await pool.query(
+        "SELECT User_ID, Is_Verified FROM User_Table WHERE Email_ID = ?",
+        [email]
+      );
 
-    if (rows.length === 0) {
-      return res.status(404).json({ error: "User not found" });
-    }
+      if (rows.length === 0) {
+        return res.status(404).json({ error: "No pending registration found. Please sign up again." });
+      }
 
-    if (rows[0].Is_Verified) {
-      return res.status(400).json({ error: "Email is already verified" });
+      if (rows[0].Is_Verified) {
+        return res.status(400).json({ error: "Email is already verified" });
+      }
     }
 
     const otp = generateOTP();
-    storeOTP(email, otp);
+    storeOTP(email, otp, pendingUserData);
     await sendOTPEmail(email, otp);
 
     res.json({ message: "A new verification code has been sent to your email." });

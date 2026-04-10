@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import Connections from '../components/Connection'
+import Navbar from '../components/layout/Navbar';
+import Footer from '../components/layout/Footer';
+import Connections from '../components/alumni/Connection';
 export default function ConnectionPage() {
   return (
     <>

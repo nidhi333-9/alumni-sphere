@@ -1,9 +1,9 @@
 import React from "react";
-import Navbar from "../components/Navbar";
-import HeroSection from "../components/HeroSection";
-import HomeNews from "../components/HomeNews";
-import HomeEvent from "../components/HomeEvent";
-import Footer from "../components/Footer";
+import Navbar from "../components/layout/Navbar";
+import HeroSection from "../components/alumni/HeroSection";
+import HomeNews from "../components/news/HomeNews";
+import HomeEvent from "../components/events/HomeEvent";
+import Footer from "../components/layout/Footer";
 
 export default function Homepage() {
   return (

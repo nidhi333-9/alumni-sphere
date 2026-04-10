@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import image from "../Images/logo.png";
+import image from "../../assets/logo.png";
 import {
   User,
   Bell,

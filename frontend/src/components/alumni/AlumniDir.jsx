@@ -1,6 +1,6 @@
 import React from "react";
 import { UserPlus } from "lucide-react";
-import maleDP from "../Images/dp-male.png"; 
+import maleDP from "../../assets/dp-male.png"; 
 
 const AlumniDir = ({ name, graduationYear, course, jobTitle, companyName }) => {
   return (

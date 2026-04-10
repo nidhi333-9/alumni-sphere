@@ -12,7 +12,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import jsPDF from "jspdf";
-import maledp from "@/Images/dp-male.png";
+import maledp from "../../assets/dp-male.png";
 
 export default function PostsPage() {
   const [posts, setPosts] = useState([]);

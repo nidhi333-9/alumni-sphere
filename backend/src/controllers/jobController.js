@@ -1,71 +1,45 @@
-const express = require("express");
-const router = express.Router();
 const pool = require("../config/db");
 
-
-router.get("/", async (req, res) => {
+// Get all jobs
+exports.getAllJobs = async (req, res) => {
   try {
     const [rows] = await pool.query(
-      `SELECT Job_ID, Job_Title, Company_Name, Location, Description, 
+      `SELECT Job_ID, Posted_By, Job_Title, Company_Name, Location, Description, 
               Application_Link, Apply_From, Apply_To, Created_At 
        FROM Job_Postings 
        ORDER BY Created_At DESC`
     );
-
     res.json(rows);
   } catch (err) {
     console.error("❌ Error fetching jobs:", err);
     res.status(500).json({ error: "Failed to fetch jobs" });
   }
-});
+};
 
-
-router.post("/", async (req, res) => {
+// Create a job posting
+exports.createJob = async (req, res) => {
   try {
-    const {
-      title,
-      company,
-      location,
-      description,
-      applyLink,
-      applyFrom,
-      applyTo,
-    } = req.body;
+    const postedBy = req.user.id;
+    const { title, company, location, description, applyLink, applyFrom, applyTo } = req.body;
 
-    if (
-      !title ||
-      !company ||
-      !location ||
-      !description ||
-      !applyFrom ||
-      !applyTo
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Please fill all required fields." });
+    if (!title || !company || !location || !description || !applyFrom || !applyTo) {
+      return res.status(400).json({ error: "Please fill all required fields." });
     }
 
     if (new Date(applyFrom) > new Date(applyTo)) {
-      return res.status(400).json({
-        error: "Apply To date must be greater than Apply From date.",
-      });
+      return res.status(400).json({ error: "Apply To date must be greater than Apply From date." });
     }
 
     const query = `
       INSERT INTO Job_Postings
-      (Job_Title, Company_Name, Location, Description, Application_Link, 
+      (Posted_By, Job_Title, Company_Name, Location, Description, Application_Link, 
        Apply_From, Apply_To, Created_At)
-      VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `;
 
     await pool.query(query, [
-      title,
-      company,
-      location,
-      description,
-      applyLink || null,
-      applyFrom,
-      applyTo,
+      postedBy, title, company, location, description,
+      applyLink || null, applyFrom, applyTo,
     ]);
 
     res.json({ success: true, message: "Job posted successfully!" });
@@ -73,17 +47,13 @@ router.post("/", async (req, res) => {
     console.error("❌ Error posting job:", err);
     res.status(500).json({ error: "Failed to post job" });
   }
-});
+};
 
-
-router.delete("/:id", async (req, res) => {
+// Delete a job posting
+exports.deleteJob = async (req, res) => {
   try {
     const jobId = req.params.id;
-
-    const [result] = await pool.query(
-      "DELETE FROM Job_Postings WHERE Job_ID = ?",
-      [jobId]
-    );
+    const [result] = await pool.query("DELETE FROM Job_Postings WHERE Job_ID = ?", [jobId]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Job not found." });
@@ -94,6 +64,4 @@ router.delete("/:id", async (req, res) => {
     console.error("❌ Error deleting job:", err);
     res.status(500).json({ error: "Failed to delete job" });
   }
-});
-
-module.exports = router;
+};
